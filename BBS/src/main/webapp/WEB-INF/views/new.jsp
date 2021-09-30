@@ -16,6 +16,7 @@
 <tr><td>비밀번호</td><td><input type=password name=passcode></td></tr>
 <tr><td colspan=2><input type=submit value='글 등록'>&nbsp;
 	<input type=button value='취소(목록)'>
+
 </table>
 </form>
 </body>
