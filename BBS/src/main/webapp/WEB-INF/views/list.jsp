@@ -8,24 +8,37 @@
 <title>게시물</title>
 </head>
 <style>
-table {
+table#tbllist {
 border-collapse:collapse;
 }
-td {
+table#tbllist td {
+	border:1px,solid, blue;
+}
+/* table#tbllist tr {
+	border:1px,solid, black;
+} */
+table#tbllist th{
 	color:white;
-	background-color:green;
-	border:1px solid yel10;
+	background-color:black;
+	border:1px, solid, yellow;
 }
 </style>
 <body>
-<table align="center" valign=top>
-<thead>
-	<tr><th>게시물번호</th><th>제목</th><th>작성자</th><th>작성시간</th><th>수정시각</th></tr>
-</thead>
-<c:forEach items="${list}" var="bbs">
-	<tr><td>${bbs.bbs_id}</td><td>${bbs.title}</td><td>${bbs.writer}</td>
-	<td>${bbs.created}</td><td>${bbs.updated}</td></tr>
-</c:forEach>		
+<table align=center valign=top border=1px,solid,black>
+<tr><td>
+	<table id=tbllist>
+	<thead>
+		<tr><th>게시물번호</th><th>제목</th><th>작성자</th><th>작성시간</th><th>수정시각</th></tr>
+	</thead>
+	<c:forEach items="${list}" var="bbs">
+		<tr><td>${bbs.bbs_id}</td><td>${bbs.title}</td><td>${bbs.writer}</td>
+			<td>${bbs.created}</td><td>${bbs.updated}</td></tr>
+	</c:forEach>
+	</table>
+</td><tr>
+<tr><td>
+	<input type=button value="새 글쓰기" id=btnNew>	
+</td></tr>	
 </table>
 </body>
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
@@ -35,6 +48,11 @@ $(document)
 	let bbs_id=$(this).find('td:eq(0)').text();//this는 윗줄tr을 의미한다//find제일 왼쪽의 
 	console.log('bbs_id ['+bbs_id+']');
 	document.location="/app/view/"+bbs_id;//다큐멘티로케이션 서버로 날아간다?
+	return false;
+})
+$(document)
+.on('click','#btnNew',function(){
+	document.location="/app/new";
 	return false;
 })
 </script>

@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Handles requests for the application home page.
@@ -60,7 +61,7 @@ public class HomeController {
 //	public String selectBBS() { //  
 //		  return "list";
 //	}
-//	   
+//	  
 	@RequestMapping(value = "/view/{bbs_id}",method = RequestMethod.GET) 
 	public String selectOneBBS(@PathVariable("bbs_id") int bbs_id, Model model) {  
 		System.out.println("bbs_id ["+bbs_id+"]");
@@ -74,10 +75,15 @@ public class HomeController {
 	public String brandNew() {
 		return "new";//jsp화일로 이동한다
 	}
-	
-	@RequestMapping(value = "/update_view", method = RequestMethod.GET) 
-	public String updateview() { 
-		return "update"; 
+	//수정내용 DB에 보내기(<<<form태그 안에 있는 submit버튼의 동작을 구현)
+	@RequestMapping(value = "/updatue_view", method = RequestMethod.POST) 
+	public String updateview(HttpServletRequest hsr) { 
+		int bbs_id =Integer.parseInt(hsr.getParameter("bbs_id"));
+		String title = hsr.getParameter("title");
+		String content = hsr.getParameter("content");
+		iBBS bbs=sqlSession.getMapper(iBBS.class);
+		bbs.updatebbs(bbs_id, title, content);
+		return "redirect:/list"; 
 	}
 	 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
@@ -93,23 +99,21 @@ public class HomeController {
 		bbs.writebbs(pTitle, pContent, pWriter, pPasscode);//ibbs.xml이랑ibbs.java와 같은 이름으로 쓴다
 		return "redirect:/list";//리스트 이름을 가진 방향으로 돌린다?--해당하는 RequestMapping으로 이동 위레 list로 이동 method실행
 	}
-	
-	  @RequestMapping(value = "/updatebbs", method = RequestMethod.POST) 
-	  public String updateBBS(HttpServletRequest hsr) { 
-		  String sbbs_id = hsr.getParameter("bbs_id");
-		  String sTitle = hsr.getParameter("title");
-		  String sContent = hsr.getParameter("content");
+	//수정할 화면을 보여준다 (update.jsp)
+	  @RequestMapping(value = "/update/{bbs_id}", method = RequestMethod.GET) 
+	  public String updateBBS(@PathVariable("bbs_id") int bbs_id, Model model) { 		  
 		  iBBS bbs=sqlSession.getMapper(iBBS.class);
-		  bbs.updatebbs(sbbs_id,sTitle,sContent);
-		  return "redirect:/list";//리스트 이름을 가진 방향으로 돌린다?위에 리스트가 뜬다	  
+		  BBSrec rec=bbs.getpost(bbs_id);
+		  model.addAttribute("post",rec);
+		  return "update";//리스트 이름을 가진 방향으로 돌린다?위에 리스트가 뜬다	  
 	  }
 	  
-	  @RequestMapping(value = "/deletebbs", method = RequestMethod.GET) 
-	  public String deleteBBS(HttpServletRequest hsr) { 
-		  int dbbs_id = Integer.parseInt(hsr.getParameter("bbs_id"));
+	  @RequestMapping(value = "/delete/{bbs_id}", method = RequestMethod.GET) 
+	  public String deleteBBS(@PathVariable("bbs_id") int bbs_id, Model model) {
+		  System.out.println("bbs_id ["+bbs_id+"]" );
 		  iBBS bbs=sqlSession.getMapper(iBBS.class);
-		  bbs.deletebbs(dbbs_id);
+		  bbs.deletebbs(bbs_id);
 		  return "redirect:/list";//리스트 이름을 가진 방향으로 돌린다?위에 리스트가 뜬다 
 	  }
-	 
+	 	 
 }

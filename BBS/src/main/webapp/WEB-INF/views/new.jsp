@@ -15,8 +15,18 @@
 <tr><td>작성자</td><td><input type=text name=writer></td></tr>
 <tr><td>비밀번호</td><td><input type=password name=passcode></td></tr>
 <tr><td colspan=2><input type=submit value='글 등록'>&nbsp;
-	<input type=button value='취소(목록)'>
-
+<!-- 취소누르면 목록보기로 넘아가도록 한게 아래 제이쿼리 방법
+	두번째 방법-
+ -->
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	 <input type=button value='취소(목록)' id=clear >
+<script >
+	$(document)
+	.on('click','#clear',function(){
+	document.location="/app/list";
+	return false;
+})
+</script>	
 </table>
 </form>
 </body>
