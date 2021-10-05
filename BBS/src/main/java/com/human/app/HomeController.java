@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -44,18 +46,20 @@ public class HomeController {
 	
 	@RequestMapping(value = "/list",  method = RequestMethod.GET) 
 	public String selectBBS(HttpServletRequest hsr, Model model) { 	
-		//String listbbs_id = hsr.getParameter("bbs_id");
-		//String listTitle = hsr.getParameter("title");
-		//String listContent = hsr.getParameter("Content");
-		//String listWriter = hsr.getParameter("Writer");
-		//String listcreated = hsr.getParameter("created");
-		//String listupdated = hsr.getParameter("updated");
 		iBBS bbs=sqlSession.getMapper(iBBS.class);
 		ArrayList<BBSrec> bbs_id=bbs.getlist();
+		HttpSession session=hsr.getSession();
+		String userid=(String)session.getAttribute("userid");
+		System.out.println("ID1 ["+userid+"]");
+		if (userid==null || userid.equals("")){//로그인 안함	
+			model.addAttribute("logined","0");
+		}else {//로그인 함	
+			model.addAttribute("logined","1");
+			model.addAttribute("userid",userid);
+		}
 		model.addAttribute("list",bbs_id);
-		return "list";
+		return "list";	
 	}
-	
 //
 //	@RequestMapping(value = "/list", method = RequestMethod.GET) 
 //	public String selectBBS() { //  
@@ -115,5 +119,51 @@ public class HomeController {
 		  bbs.deletebbs(bbs_id);
 		  return "redirect:/list";//리스트 이름을 가진 방향으로 돌린다?위에 리스트가 뜬다 
 	  }
-	 	 
+	  @RequestMapping(value = "/login")
+		public String showlist() {
+		  
+			return "login";//jsp화일로 이동한
+		}
+	  //login.jsp submit버튼 기능 구현
+	  @RequestMapping(value = "/logincheck",method = RequestMethod.POST)
+		public String logincheck(HttpServletRequest hsr) {
+		  String loginid=hsr.getParameter("loginid");
+		  String passcode=hsr.getParameter("passcode");
+			System.out.println("name["+passcode+"]");
+			iMember mem=sqlSession.getMapper(iMember.class);
+			int n=mem.checkUser(loginid,passcode);
+			if(n==1) {
+				HttpSession session=hsr.getSession();
+				session.setAttribute("userid", loginid);
+				return "redirect:/list";
+			}else {//0
+				return "redirect:/login";
+			}
+		}
+	  @RequestMapping(value = "/sign")
+		public String show() {
+		  
+			return "sign";//jsp화일로 이동한
+		}
+	  
+		@RequestMapping(value = "/signin",method = RequestMethod.POST,
+				produces = "application/text; charset=utf8")
+		public String newbie(HttpServletRequest hsr)	{
+			
+			String name=hsr.getParameter("realname");
+			System.out.println("name["+name+"]");
+			String loginid=hsr.getParameter("loginid");
+			String passcode=hsr.getParameter("password1");
+			//mybatis xml 실행
+			iBBS bbs=sqlSession.getMapper(iBBS.class);
+			bbs.signin(name,loginid,passcode);
+			
+			return "redirect:/login";//jsp화일로 이동한다
+		}	 
+		 @RequestMapping("/logout")
+			public String logout(HttpServletRequest hsr) {
+			 HttpSession session=hsr.getSession();
+			 session.invalidate();
+			return "redirect:/list";//jsp화일로 이동한
+		}
 }

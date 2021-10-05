@@ -23,9 +23,15 @@ table#tbllist th{
 	border:1px, solid, yellow;
 }
 </style>
-<body>
-<table align=center valign=top border=1px,solid,black>
-<tr><td>
+<table align=center valign=top>
+<tr><td align=right>
+<c:if test="${logined eq '0'}">
+<input type=button value="로그인" id=btnlogin >
+</c:if>
+<c:if test="${logined eq '1'}">
+<input type=button value="로그아웃" id=doloout >
+</c:if>
+</td></tr>
 	<table id=tbllist>
 	<thead>
 		<tr><th>게시물번호</th><th>제목</th><th>작성자</th><th>작성시간</th><th>수정시각</th></tr>
@@ -37,7 +43,9 @@ table#tbllist th{
 	</table>
 </td><tr>
 <tr><td>
+<c:if test="${logined eq '1'}">
 	<input type=button value="새 글쓰기" id=btnNew>	
+</c:if>
 </td></tr>	
 </table>
 </body>
@@ -50,11 +58,19 @@ $(document)
 	document.location="/app/view/"+bbs_id;//다큐멘티로케이션 서버로 날아간다?
 	return false;
 })
-$(document)
 .on('click','#btnNew',function(){
 	document.location="/app/new";
 	return false;
 })
+ .on('click','#btnlogin',function(){
+ 	document.location="/app/login";
+ 	return false;
+ })
+ 
+ .on('click','#doloout',function(){
+	 if(confirm("로그아웃 하시겟습니까")) return true;
+     else return false;
+ })
 </script>
 </body>
 </html>

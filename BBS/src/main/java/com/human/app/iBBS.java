@@ -8,5 +8,6 @@ public interface iBBS {
 	BBSrec getpost(int bbs_id);//하나만 가져올때는 Array안씀
 	void deletebbs(int dbbs_id);
 	void updatebbs(int bbs_id, String title, String content);
-	 
+	void signin(String name,String loginid,String passcode);
+	//void sign(String loginid, String passcode);
 }
