@@ -19,7 +19,7 @@
 <tr>
 	<td align=center colspan=2>
 	<input type="submit" value="로그인">
-	<input type=button value="최소" id=clear>
+	<input type=button value="최소" id=clear type=reset>
 </td>
 </tr>
 <tr>
@@ -44,11 +44,6 @@ $(document)
 //아래 회원가입 누르면 sign화면으로 이동
 .on('click','#newbie',function(){
  	document.location="/app/sign";
- 	return false;
- })
- //아래 취소 버튼 누르면  new화면으로 이동
- .on('click','#clear',function(){
- 	document.location="/app/new";
  	return false;
  })
  //아래 목록버튼 누르면 list화면으로 이동

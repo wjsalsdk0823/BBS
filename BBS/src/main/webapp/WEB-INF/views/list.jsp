@@ -66,10 +66,13 @@ $(document)
  	document.location="/app/login";
  	return false;
  })
- 
  .on('click','#doloout',function(){
 	 if(confirm("로그아웃 하시겟습니까")) return true;
      else return false;
+ })
+ .on('click','#doloout',function(){
+ 	document.location="/app/login";
+ 	return false;
  })
 </script>
 </body>

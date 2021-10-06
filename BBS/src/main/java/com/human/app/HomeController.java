@@ -66,13 +66,21 @@ public class HomeController {
 //		  return "list";
 //	}
 //	  
+	//아래 댓글 등록하면 댓글리스트 가져오기 뷰 jsp 54/57
 	@RequestMapping(value = "/view/{bbs_id}",method = RequestMethod.GET) 
-	public String selectOneBBS(@PathVariable("bbs_id") int bbs_id, Model model) {  
-		System.out.println("bbs_id ["+bbs_id+"]");
+	public String selectOneBBS(@PathVariable("bbs_id") int bbs_id,
+		HttpServletRequest hsr,Model model) {  
+		//System.out.println("bbs_id ["+bbs_id+"]");
 		iBBS bbs=sqlSession.getMapper(iBBS.class);
 		BBSrec post=bbs.getpost(bbs_id);
 		model.addAttribute("post",post);
-		  return "view";//뷰한테 넘겨줄때는 모델 써야한다
+		HttpSession session=hsr.getSession();
+		model.addAttribute("userid",session.getAttribute("userid"));
+		
+		iReply r=sqlSession.getMapper(iReply.class);
+		ArrayList<Reply> replyList=r.getReplylist(bbs_id);
+		model.addAttribute("reply_list",replyList);
+		return "view";//뷰한테 넘겨줄때는 모델 써야한다
 	}
 	
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -166,4 +174,43 @@ public class HomeController {
 			 session.invalidate();
 			return "redirect:/list";//jsp화일로 이동한
 		}
+		 //아래 댓글에 글 등록하면 등록하게하고 아래 내용나오게 만드는법 DB랑 연결 뷰.jsp 81/96
+		 @RequestMapping(value = "/ReplyControl",method = RequestMethod.POST)
+		 @ResponseBody
+		 public String doReplyControl(HttpServletRequest hsr) {
+			 System.out.println("doReplyControl");
+			 String result="";
+			 try {
+				 String optype=hsr.getParameter("optype");	
+				 if(optype.equals("add")) {//댓글등록(추가)	 
+				 String reply_content=hsr.getParameter("content");
+				 int bbs_id =Integer.parseInt(hsr.getParameter("bbs_id"));
+				 HttpSession s=hsr.getSession();
+				 String userid=(String) s.getAttribute("userid");
+				 System.out.println("userid ["+userid+"]");
+				 //mybitis호출
+				 iReply reply=sqlSession.getMapper(iReply.class);
+				 reply.add(bbs_id,reply_content,userid);
+			 }else if(optype.equals("delete")) {//댓글삭제 \
+				 int reply_id=Integer.parseInt(hsr.getParameter("reply_id"));
+				 iReply re=sqlSession.getMapper(iReply.class);
+				 re.delete(reply_id);
+			 }else if(optype.equals("update")) {//댓글수정 
+			 }
+			 result="ok";
+		 }catch (Exception e) {
+			 result="fail";
+		 }  finally {
+			 return result;
+			 
+	 }
+}
+		
+		 //아래는 로그인
+		 public boolean checkLogin(HttpServletRequest hsr) {
+		  HttpSession s=hsr.getSession();
+		  String userid=(String) s.getAttribute("userid");
+		  if(userid == null || userid.equals(null))return false;
+		  return true;
+		} 
 }
