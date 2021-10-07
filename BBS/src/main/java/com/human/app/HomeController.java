@@ -42,8 +42,7 @@ public class HomeController {
 	 * String formattedDate = dateFormat.format(date);
 	 * model.addAttribute("serverTime", formattedDate );//데이터는 모델에 실어서 보낸다? return
 	 * "home";//JSP화일명 } */
-	
-	
+		
 	@RequestMapping(value = "/list",  method = RequestMethod.GET) 
 	public String selectBBS(HttpServletRequest hsr, Model model) { 	
 		iBBS bbs=sqlSession.getMapper(iBBS.class);
@@ -60,23 +59,28 @@ public class HomeController {
 		model.addAttribute("list",bbs_id);
 		return "list";	
 	}
-//
-//	@RequestMapping(value = "/list", method = RequestMethod.GET) 
-//	public String selectBBS() { //  
-//		  return "list";
-//	}
-//	  
 	//아래 댓글 등록하면 댓글리스트 가져오기 뷰 jsp 54/57
 	@RequestMapping(value = "/view/{bbs_id}",method = RequestMethod.GET) 
 	public String selectOneBBS(@PathVariable("bbs_id") int bbs_id,
 		HttpServletRequest hsr,Model model) {  
 		//System.out.println("bbs_id ["+bbs_id+"]");
+		//게시물 내용가져오기
 		iBBS bbs=sqlSession.getMapper(iBBS.class);
 		BBSrec post=bbs.getpost(bbs_id);
 		model.addAttribute("post",post);
+		//현재 사용자 아이디 가져오기
 		HttpSession session=hsr.getSession();
 		model.addAttribute("userid",session.getAttribute("userid"));
-		
+		//로그인 여부 확인
+		String userid=(String)session.getAttribute("userid");
+		//System.out.println("userid ["+userid+"]");
+		if (userid==null || userid.equals("")){//로그인 안함	
+			model.addAttribute("logined","0");
+		}else {//로그인 함	
+			model.addAttribute("logined","1");
+			model.addAttribute("userid",userid);
+		}
+		//현재 게시물에 속한 댓글 리스트 가져오기
 		iReply r=sqlSession.getMapper(iReply.class);
 		ArrayList<Reply> replyList=r.getReplylist(bbs_id);
 		model.addAttribute("reply_list",replyList);
@@ -97,18 +101,17 @@ public class HomeController {
 		bbs.updatebbs(bbs_id, title, content);
 		return "redirect:/list"; 
 	}
-	 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String insertBBS(HttpServletRequest hsr) {
 		String pTitle = hsr.getParameter("title");//new.jsp에서 설정한 이름과 같아야한다 앞에는 다르게 설정
 		String pContent = hsr.getParameter("content");//new.jsp에서 설정한 이름과 같아야한다 앞에는 다르게 설정
 		String pWriter = hsr.getParameter("writer");//new.jsp에서 설정한 이름과 같아야한다 앞에는 다르게 설정
-		String pPasscode = hsr.getParameter("passcode");//new.jsp에서 설정한 이름과 같아야한다 앞에는 다르게 설정
+		//String pPasscode = hsr.getParameter("passcode");//new.jsp에서 설정한 이름과 같아야한다 앞에는 다르게 설정
 		//아래 디버깅 하는법
-		System.out.println("title ["+pTitle+"] content ["+pContent+"] write ["+pWriter+"] passcode ["+pPasscode+"]" );
+		System.out.println("title ["+pTitle+"] content ["+pContent+"] write ["+pWriter+"]" );
 		//insert into DB table
 		iBBS bbs=sqlSession.getMapper(iBBS.class);
-		bbs.writebbs(pTitle, pContent, pWriter, pPasscode);//ibbs.xml이랑ibbs.java와 같은 이름으로 쓴다
+		bbs.writebbs(pTitle, pContent, pWriter);//ibbs.xml이랑ibbs.java와 같은 이름으로 쓴다
 		return "redirect:/list";//리스트 이름을 가진 방향으로 돌린다?--해당하는 RequestMapping으로 이동 위레 list로 이동 method실행
 	}
 	//수정할 화면을 보여준다 (update.jsp)
@@ -175,6 +178,7 @@ public class HomeController {
 			return "redirect:/list";//jsp화일로 이동한
 		}
 		 //아래 댓글에 글 등록하면 등록하게하고 아래 내용나오게 만드는법 DB랑 연결 뷰.jsp 81/96
+		 //댓글 삭제 수정
 		 @RequestMapping(value = "/ReplyControl",method = RequestMethod.POST)
 		 @ResponseBody
 		 public String doReplyControl(HttpServletRequest hsr) {
@@ -191,20 +195,29 @@ public class HomeController {
 				 //mybitis호출
 				 iReply reply=sqlSession.getMapper(iReply.class);
 				 reply.add(bbs_id,reply_content,userid);
-			 }else if(optype.equals("delete")) {//댓글삭제 \
+				 
+			 }else if(optype.equals("delete")) {//댓글 쓴거 삭제
 				 int reply_id=Integer.parseInt(hsr.getParameter("reply_id"));
 				 iReply re=sqlSession.getMapper(iReply.class);
 				 re.delete(reply_id);
+				 
 			 }else if(optype.equals("update")) {//댓글수정 
+				 String content=hsr.getParameter("content");
+				 int reply_id =Integer.parseInt(hsr.getParameter("reply_id"));
+				 System.out.println("content ["+content+"]");
+				 System.out.println("reply_id ["+reply_id+"]");
+				 iReply re=sqlSession.getMapper(iReply.class);
+				 re.update(content,reply_id);
 			 }
 			 result="ok";
 		 }catch (Exception e) {
 			 result="fail";
 		 }  finally {
-			 return result;
+			 return "result";
+		 }
 			 
 	 }
-}
+
 		
 		 //아래는 로그인
 		 public boolean checkLogin(HttpServletRequest hsr) {

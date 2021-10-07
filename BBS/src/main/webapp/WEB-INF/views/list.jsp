@@ -7,23 +7,21 @@
 <meta charset="UTF-8">
 <title>게시물</title>
 </head>
+<body>
 <style>
-table#tbllist {
+#tbllist {
 border-collapse:collapse;
 }
-table#tbllist td {
-	border:1px,solid, blue;
+#tbllist td {
+	border:1px solid blue;
 }
-/* table#tbllist tr {
-	border:1px,solid, black;
-} */
-table#tbllist th{
+#tbllist th{
 	color:white;
 	background-color:black;
 	border:1px, solid, yellow;
 }
 </style>
-<table align=center valign=top>
+<table align="center" valign=top>
 <tr><td align=right>
 <c:if test="${logined eq '0'}">
 <input type=button value="로그인" id=btnlogin >
