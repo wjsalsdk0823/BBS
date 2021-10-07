@@ -43,9 +43,9 @@ table#tblView th{
 <tr><td>
 <input type=button value='목록보기' onclick="document.location='/app/list';">
 <c:if test="${userid eq post.writer}">
-<input type=button id=btnupdate value=수정>
+<input type=button id=btnupdate value=게시물수정>
 </td><td align=right>
-<input type=button id=btndelete value=삭제>
+<input type=button id=btndelete value=게시물삭제>
 </c:if>
 </td></tr>
 <c:if test="${userid ne '' }">

@@ -14,6 +14,7 @@ border-collapse:collapse;
 }
 #tbllist td {
 	border:1px solid blue;
+	
 }
 #tbllist th{
 	color:white;
