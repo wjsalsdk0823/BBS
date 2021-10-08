@@ -46,6 +46,9 @@ border-collapse:collapse;
 	<input type=button value="새 글쓰기" id=btnNew>	
 </c:if>
 </td></tr>	
+<tr>
+	<td colspan=2 align=center>${direct}</td>
+</tr>
 </table>
 </body>
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>

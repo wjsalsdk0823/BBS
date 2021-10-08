@@ -32,9 +32,14 @@ table#tblView th{
 </c:if>
 </td></tr>
 <tr><td colspan=2>
-	<table >
+	<table id=tblView>
 	<tr><td>제목</td><td>${post.title}</td></tr>
-	<tr><td>내용</td><td>${post.content}</td></tr>
+	<tr><td>내용</td>
+		<td>${post.content}
+<c:if test="${post.img_loc ne '' }">
+			<br><img src="/app/resources/${post.img_loc}">
+</c:if>
+</td></tr>
 	<tr><td>작성자</td><td>${post.writer}</td></tr>
 	<tr><td>작성시각</td><td>${post.created}</td></tr>
 	<tr><td>수정시각</td><td>${post.updated}</td></tr>

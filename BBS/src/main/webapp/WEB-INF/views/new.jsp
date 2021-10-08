@@ -10,12 +10,13 @@
 <body>
 <table align=center valign=top>
 <tr><td>
-	<form method=POST action="/app/save" id=frmNew> 
+	<form method=POST action="/app/save" id="frmNew" enctype="multipart/form-data"> 
 	<table>
 	<tr><td>제목</td><td><input type=text name=title size=58></td></tr>
 	<tr><td valign=top>내용</td>
 		<td><textarea name=content rows=20 cols=60></textarea></td></tr>
 	<tr><td>작성자</td><td><input type=text name=writer value='${userid}' readonly></td></tr>
+	<tr><td>업로드</td><td><input type="file" name="ufile" id="ufile"></td></tr>
 	<!-- <tr><td>비밀번호</td><td><input type=password name=passcode></td></tr> -->
 	<tr><td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type=submit value='글 등록'>&nbsp;
 	<!-- 취소누르면 목록보기로 넘아가도록 한게 아래 제이쿼리 방법두번째 방법 -->
